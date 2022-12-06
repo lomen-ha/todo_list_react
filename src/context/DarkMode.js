@@ -1,17 +1,33 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useMemo, useState } from 'react';
 
-export const ThemeContext = createContext();
+export const ThemeValueContext = createContext();
+export const ThemeActionsContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-  const themeState = useState('dark');
+  const [darkTheme, setDarkTheme] = useState('dark');
+  const actions = useMemo(
+    () => () => setDarkTheme((prev) => (prev === 'dark' ? 'light' : 'dark')),
+    []
+  );
   return (
-    <ThemeContext.Provider value={themeState}>{children}</ThemeContext.Provider>
+    <ThemeActionsContext.Provider value={actions}>
+      <ThemeValueContext.Provider value={darkTheme}>
+        {children}
+      </ThemeValueContext.Provider>
+    </ThemeActionsContext.Provider>
   );
 };
 
-export const useThemeState = () => {
-  const value = useContext(ThemeContext);
+export const useThemeValue = () => {
+  const value = useContext(ThemeValueContext);
   if (value === undefined)
-    throw new Error('useMyContext should be used within MyContext.Provider');
+    throw new Error('useThemeValue should be used within MyContext.Provider');
+  return value;
+};
+
+export const useThemeActions = () => {
+  const value = useContext(ThemeActionsContext);
+  if (value === undefined)
+    throw new Error('useThemeActions should be used within MyContext.Provider');
   return value;
 };

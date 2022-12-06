@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { FaSun, FaMoon } from 'react-icons/fa';
-import { useThemeState } from '../context/DarkMode';
+import { useThemeActions, useThemeValue } from '../context/DarkMode';
 
 export default function Header() {
-  const [theme, setTheme] = useThemeState();
+  const darkTheme = useThemeValue();
+  const actions = useThemeActions();
   const [selectedMenu, setSelectedMenu] = useState(0);
   const menu = [
     { idx: 0, name: 'All' },
@@ -12,10 +13,8 @@ export default function Header() {
   ];
   return (
     <div className='flex w-full justify-between bg-violet-800 p-4'>
-      <button
-        onClick={() => setTheme((t) => (t === 'light' ? 'dark' : 'light'))}
-      >
-        {theme === 'light' ? <FaMoon /> : <FaSun />}
+      <button onClick={actions}>
+        {darkTheme === 'light' ? <FaMoon /> : <FaSun />}
       </button>
       <ul className='flex gap-6'>
         {menu.map((el, idx) => (
