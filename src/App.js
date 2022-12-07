@@ -3,14 +3,17 @@ import Header from './components/Header';
 import Todos from './components/Todos';
 import Layout from './components/Layout';
 import { ThemeProvider } from './context/DarkMode';
+import { TodosProvider } from './context/Todos';
 
 function App() {
   return (
     <ThemeProvider>
       <Layout>
-        <Header />
-        <Todos />
-        <Input />
+        <TodosProvider>
+          <Header />
+          <Todos />
+          <Input />
+        </TodosProvider>
       </Layout>
     </ThemeProvider>
   );

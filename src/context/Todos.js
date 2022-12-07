@@ -1,11 +1,12 @@
-import { createContext, useContext, useMemo, useRef, useState } from 'react';
+import { createContext, useContext, useMemo, useRef } from 'react';
+import { useImmer } from 'use-immer';
 
 export const TodosValueContext = createContext();
 export const TodosActionsContext = createContext();
 
 export const TodosProvider = ({ children }) => {
   const idRef = useRef(3);
-  const [todos, setTodos] = useState([
+  const [todos, setTodos] = useImmer([
     {
       id: 1,
       text: '밥먹기',
@@ -22,14 +23,24 @@ export const TodosProvider = ({ children }) => {
       add(text) {
         const id = idRef.current;
         idRef.current += 1;
-        setTodos((prev) => [...prev, { id, text, done: false }]);
+        setTodos((prev) => {
+          prev.push({ id, text, done: false });
+        });
       },
       toggle(id) {
-        setTodos((prev) =>
-          prev.map((item) =>
-            item.id === id ? { ...item, done: !item.done } : item
-          )
-        );
+        setTodos((prev) => {
+          const todo = prev.find((todo) => todo.id === id);
+          todo.done = !todo.done;
+        });
+      },
+      remove(id) {
+        setTodos((prev) => prev.filter((todo) => todo.id !== id));
+      },
+      completed() {
+        setTodos((prev) => prev.filter((todo) => todo.done === true));
+      },
+      active() {
+        setTodos((prev) => prev.filter((todo) => todo.done === false));
       },
     }),
     []
